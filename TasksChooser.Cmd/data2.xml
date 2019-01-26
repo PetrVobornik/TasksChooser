@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<task password="123,321">
+  <settings level="-a,*" count="2:1/a,1/c|b,1/*" round="1" />
+  <headers>
+    
+  </headers>
+  
+  <before>
+    <h1>Test</h1>
+    <p>Start <b><rndS values="A,B,C" /> <rndI min="10" max="20" /></b>.</p>
+    \&lt;ol\&gt;
+  </before>
+
+  <items>
+    <item>A</item>
+    <item cat="a,b,">B</item>
+    <item cat="a,c" level="a,b">C</item>
+    <item cat="a,c" level="a,">D</item>
+    <item level="x,y">E</item>
+    <item forRound="1,2">F</item>
+    <item notForRound="1">G</item>
+    <item fromRound="1">H</item>
+    <item toRound="1">I</item>
+  </items>
+    
+  <after>
+    \&lt;/ol\&gt;
+    <p>End</p>
+  </after>
+  
+</task>
