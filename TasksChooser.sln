@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.Cmd", "TasksCh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest", "TasksChooser.RandomTest\TasksChooser.RandomTest.csproj", "{595C2E21-5C27-414E-B773-0137E90182E0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,26 +29,15 @@ Global
 		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{595C2E21-5C27-414E-B773-0137E90182E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{595C2E21-5C27-414E-B773-0137E90182E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{595C2E21-5C27-414E-B773-0137E90182E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{595C2E21-5C27-414E-B773-0137E90182E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AA87BF20-D283-4638-A180-207AD0EB0FAF}
-	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://petrvobornik.visualstudio.com/
-		SccProjectUniqueName0 = TasksChooser\\TasksChooser.csproj
-		SccProjectName0 = TasksChooser
-		SccLocalPath0 = TasksChooser
-		SccProjectUniqueName1 = TasksChooser.Web\\TasksChooser.Web.csproj
-		SccProjectName1 = TasksChooser.Web
-		SccLocalPath1 = TasksChooser.Web
-		SccProjectUniqueName2 = TasksChooser.Cmd\\TasksChooser.Cmd.csproj
-		SccProjectName2 = TasksChooser.Cmd
-		SccLocalPath2 = TasksChooser.Cmd
-		SccLocalPath3 = .
 	EndGlobalSection
 EndGlobal
