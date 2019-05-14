@@ -155,7 +155,9 @@ namespace Amporis.TasksChooser
             setting.Round = setProp(TaskSettingProp.Round, setting.Round);
             setting.Seed = setProp(TaskSettingProp.Seed, setting.Seed);
             setting.ItemsCount = LoadItemsCount(setProp(TaskSettingProp.ItemsCount, ""));
-            setting.SeparatePreviousPairs = setProp(TaskSettingProp.SeparatePreviousPairs, setting.SeparatePreviousPairs);            
+            setting.SeparatePreviousPairs = setProp(TaskSettingProp.SeparatePreviousPairs, setting.SeparatePreviousPairs);
+            eSettings.Attributes().Where(a => a.Name.LocalName.StartsWith("custom_")).ForEach(a => 
+                setting.CustomSettings.Add(a.Name.LocalName.Substring(7), a.Value));
             return setting;
         }
 

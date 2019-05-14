@@ -94,6 +94,15 @@ namespace Amporis.TasksChooser
             return null;
         }
 
+        public static U GetRef<T, U>(this Dictionary<T, U> dict, T key) where U : class
+        {
+            U val;
+            if (dict.TryGetValue(key, out val))
+                return val;
+            return null;
+        }
+
+
         public static string EncodeEscapedHtmlTags(this string s)
         {
             return s
@@ -151,6 +160,14 @@ namespace Amporis.TasksChooser
             for (int i = from+1; i <= to; i++)
                 xor ^= b[i];
             return xor;
+        }
+
+        public static int? ToInt(this string text)
+        {
+            if (!String.IsNullOrEmpty(text))
+                if (int.TryParse(text, out int number))
+                    return number;
+            return null;
         }
     }
 

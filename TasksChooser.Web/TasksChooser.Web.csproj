@@ -29,7 +29,7 @@
     <Content Update="wwwroot\App_Data\data1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Update="wwwroot\App_Data\data2.xml">
+    <Content Update="wwwroot\App_Data\PPRO1.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Update="wwwroot\App_Data\data3.xml">

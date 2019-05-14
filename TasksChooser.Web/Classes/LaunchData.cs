@@ -11,6 +11,7 @@ namespace Amporis.TasksChooser.Web
         public string File { get; set; } // oauth_consumer_key
         public string Password { get; set; } // custom_password
         public bool AddHtmlCode { get; set; } // custom_html
+        public int? RenderMultiTo { get; set; } // custom_multi
         public bool AddCopyProtection { get; set; } // custom_nocopy
         public TaskSetting Settings { get; set; } = new TaskSetting();      
     }

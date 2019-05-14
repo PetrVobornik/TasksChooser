@@ -52,6 +52,7 @@ namespace Amporis.TasksChooser
         public TaskItemsCount ItemsCount { get; set; } = new TaskItemsCount();
         public bool RandomOrder { get; set; } = true;
         public bool SeparatePreviousPairs { get; set; } = true;
+        public Dictionary<string, string> CustomSettings { get; set; } = new Dictionary<string, string>();
 
         public TaskSettingProp ReadOnlyProps { get; set; } = 0;
         public TaskSettingProp SetProps { get; set; } = 0;
@@ -68,6 +69,7 @@ namespace Amporis.TasksChooser
                 SeparatePreviousPairs = SeparatePreviousPairs,
                 ReadOnlyProps = ReadOnlyProps,
                 SetProps = SetProps,
+                CustomSettings = new Dictionary<string, string>(CustomSettings),
             };
         }
 

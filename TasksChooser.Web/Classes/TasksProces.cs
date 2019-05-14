@@ -51,6 +51,7 @@ namespace Amporis.TasksChooser.Web
             if (request.Form?.TryGetValue("oauth_consumer_key", out StringValues pass) == true) ld.Password = pass;
             if (request.Form?.TryGetValue("custom_html", out StringValues html) == true) ld.AddHtmlCode = html == "1";
             if (request.Form?.TryGetValue("custom_nocopy", out StringValues noCopy) == true) ld.AddCopyProtection = noCopy == "1";
+            if (request.Form?.TryGetValue("custom_multi", out StringValues multi) == true) ld.RenderMultiTo = multi.ToString().ToInt();
             T setProp<T>(TaskSettingProp prop, T defaultValue) => ReadPropFromForm(request, ld, "custom_", prop, defaultValue);
             ld.Settings.ItemsCount = TaskLoader.LoadItemsCount(setProp(TaskSettingProp.ItemsCount, ""));
             ld.Settings.Level = setProp(TaskSettingProp.Level, "").Split(',');
@@ -70,6 +71,7 @@ namespace Amporis.TasksChooser.Web
             if (request.Form?.TryGetValue("password", out StringValues pass) == true) ld.Password = pass;
             if (request.Form?.TryGetValue("html", out StringValues html) == true) ld.AddHtmlCode = html == "1";
             if (request.Form?.TryGetValue("nocopy", out StringValues noCopy) == true) ld.AddCopyProtection = noCopy == "1";
+            if (request.Form?.TryGetValue("multi", out StringValues multi) == true) ld.RenderMultiTo = multi.ToString().ToInt();
             T setProp<T>(TaskSettingProp prop, T defaultValue) => ReadPropFromForm(request, ld, "", prop, defaultValue);
             ld.Settings.ItemsCount = TaskLoader.LoadItemsCount(setProp(TaskSettingProp.ItemsCount, ""));
             ld.Settings.Level = setProp(TaskSettingProp.Level, "").Split(',');
@@ -87,6 +89,7 @@ namespace Amporis.TasksChooser.Web
             ld.Password = request.Query["password"];
             ld.AddHtmlCode = request.Query["html"] == "1";
             ld.AddCopyProtection = request.Query["nocopy"] == "1";
+            ld.RenderMultiTo = request.Query["multi"].ToString().ToInt();
             T setProp<T>(TaskSettingProp prop, T defaultValue) {
                 string key = TaskSetting.ShorPropNames[prop];
                 string sVal = request.Query[key];
@@ -183,9 +186,10 @@ namespace Amporis.TasksChooser.Web
         public string FileName { get; private set; }
         public string Result { get; private set; }
 
-        public bool AddHtmlCode { get => LdGetData?.AddHtmlCode == true || LdPost?.AddHtmlCode == true || LdGet?.AddHtmlCode == true; } 
-        public bool AddCopyProtection { get => LdGetData?.AddCopyProtection == true || LdPost?.AddCopyProtection == true || LdGet?.AddCopyProtection == true; } 
+        public bool AddHtmlCode { get => LdGetData?.AddHtmlCode == true || LdPost?.AddHtmlCode == true || LdGet?.AddHtmlCode == true || TasksData?.Setting?.CustomSettings?.GetRef("addHtmlCode") == "1"; } 
+        public bool AddCopyProtection { get => LdGetData?.AddCopyProtection == true || LdPost?.AddCopyProtection == true || LdGet?.AddCopyProtection == true; }
 
+        public string CustomStyle { get => TasksData?.Setting?.CustomSettings?.GetRef("style") ?? ""; }
 
         public bool LoadData(HttpRequest request)
         {
@@ -204,11 +208,12 @@ namespace Amporis.TasksChooser.Web
             if (String.IsNullOrEmpty(FileName)) return false;
 
             object cachedTasks = null;
+
             //if (Cache?.TryGetValue(FileName, out cachedTasks) == true)
             //    TasksData = cachedTasks as Tasks;
             if (TasksData == null)
             {
-                TasksData = TaskLoader.LoadTasksFromFile(FileName); // TODO: cache
+                TasksData = TaskLoader.LoadTasksFromFile(FileName);
                 Cache.Set(FileName, TasksData, TimeSpan.FromMinutes(1));
             }
             if (TasksData == null) return false;
@@ -222,7 +227,13 @@ namespace Amporis.TasksChooser.Web
                 return false; // No password, but it is needed
 
             var setting = TaskLoader.MergeSettings(LdGetData?.Settings, LdPost?.Settings, LdGet?.Settings);
-            Result = TaskRender.Render(TasksData, setting, out string selectedIds);
+            int? ldMultiTo = LdGetData?.RenderMultiTo ?? LdPost?.RenderMultiTo ?? LdGet?.RenderMultiTo;
+
+            string selectedIds;
+            if (ldMultiTo != null && ldMultiTo > 1 && TasksData.Setting.CustomSettings.GetRef("allowMulti") == "1")
+                Result = TaskRender.RenderMulti(TasksData, setting, (int)ldMultiTo, out selectedIds);
+            else 
+                Result = TaskRender.Render(TasksData, setting, out selectedIds);
 
             Log(request, setting, FileName, selectedIds);
 

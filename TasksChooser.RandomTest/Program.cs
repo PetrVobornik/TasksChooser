@@ -18,6 +18,7 @@ namespace TasksChooser.RandomTest
             string fileName = $"{DateTime.Now:yyyy-MM-dd-HH-mm-ss}";
 
             CreateBinaryData(mainSeed, contOfColumns, contOfIRows, fileName+".bin");
+            //CreateTextData(mainSeed, contOfColumns, contOfIRows, fileName+".csv");
 
             Console.WriteLine("Done");
             Console.ReadLine();

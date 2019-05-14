@@ -177,7 +177,7 @@ namespace Amporis.TasksChooser
                 (item.ToRound == null || item.ToRound <= round) &&      // ToRound
                 RoundCheck(item.ForRounds, round, true) &&              // ForRounds
                 RoundCheck(item.NotForRounds, round, false) &&          // NotForRounds   
-                LevelCheck(item.Level, setting.Level);            // Level
+                LevelCheck(item.Level, setting.Level);                  // Level
             // Before
             tasks.Before.Where(x => testItem(x)).ForEach(x => RenderText(x));
             // Items
@@ -188,6 +188,8 @@ namespace Amporis.TasksChooser
             // After
             tasks.After.Where(x => testItem(x)).ForEach(x => RenderText(x));
             // Result
+            output = output.Replace("{round}", round.ToString());
+            output = output.Replace("{date}", DateTime.Today.ToString("dd.MM.yyyy"));
             return output.ToString();
         }
 
@@ -203,6 +205,23 @@ namespace Amporis.TasksChooser
                 result = render.Render(i);
             selectedItemIds = render.selectedIds.ArrayToCommaText();
             return result;
+        }
+
+        public static string RenderMulti(Tasks tasks, TaskSetting setting, int roundTo)
+            => RenderMulti(tasks, setting, roundTo, out string selectedItemIds);
+
+        public static string RenderMulti(Tasks tasks, TaskSetting setting, int roundTo, out string selectedItemIds)
+        {
+            var render = new TaskRender(tasks, setting);
+            StringBuilder result = new StringBuilder();
+            if (roundTo >= render.setting.Round)
+                for (int i = 1; i <= roundTo; i++)
+                    if (i >= render.setting.Round)
+                        result.AppendLine(render.Render(i));
+                    else
+                        render.Render(i);
+            selectedItemIds = render.selectedIds.ArrayToCommaText();
+            return result.ToString();
         }
     }
 }
