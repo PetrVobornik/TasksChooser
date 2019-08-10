@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.88
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser", "TasksChooser\TasksChooser.csproj", "{36A77D8A-4034-4A36-9CE9-83D6340BBCFD}"
 EndProject
@@ -9,7 +9,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.Cmd", "TasksCh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest", "TasksChooser.RandomTest\TasksChooser.RandomTest.csproj", "{595C2E21-5C27-414E-B773-0137E90182E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Cmd", "TasksChooser.RandomTest\TasksChooser.RandomTest.Cmd\TasksChooser.RandomTest.Cmd.csproj", "{595C2E21-5C27-414E-B773-0137E90182E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Android", "TasksChooser.RandomTest\TasksChooser.RandomTest.Android\TasksChooser.RandomTest.Android.csproj", "{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RandomTest", "RandomTest", "{29492177-3A4F-45AC-9AB9-CC926FB4B06B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest", "TasksChooser.RandomTest\TasksChooser.RandomTest\TasksChooser.RandomTest.csproj", "{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Core", "TasksChooser.RandomTest\TasksChooser.RandomTest.Core\TasksChooser.RandomTest.Core.csproj", "{3DECD63A-6087-46E2-8B37-2C566E006830}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +41,29 @@ Global
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DECD63A-6087-46E2-8B37-2C566E006830}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DECD63A-6087-46E2-8B37-2C566E006830}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DECD63A-6087-46E2-8B37-2C566E006830}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DECD63A-6087-46E2-8B37-2C566E006830}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{595C2E21-5C27-414E-B773-0137E90182E0} = {29492177-3A4F-45AC-9AB9-CC926FB4B06B}
+		{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2} = {29492177-3A4F-45AC-9AB9-CC926FB4B06B}
+		{A82A2C13-C8FB-40C1-9D29-5344C0AD3208} = {29492177-3A4F-45AC-9AB9-CC926FB4B06B}
+		{3DECD63A-6087-46E2-8B37-2C566E006830} = {29492177-3A4F-45AC-9AB9-CC926FB4B06B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AA87BF20-D283-4638-A180-207AD0EB0FAF}

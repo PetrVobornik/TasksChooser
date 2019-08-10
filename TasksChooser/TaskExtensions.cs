@@ -143,15 +143,30 @@ namespace Amporis.TasksChooser
             if (String.IsNullOrEmpty(text))
                 return 0;
             var byty = Encoding.UTF8.GetBytes(text);
-            var sha = new SHA1Managed();
-            var hash = sha.ComputeHash(byty);
-            byte b = hash[0];
-            b ^= hash[1];
-            var bytes = new byte[] { hash.Xor(0, 4), hash.Xor(5, 9), hash.Xor(10, 14), hash.Xor(15, 19), };
+            //var sha = new SHA3Managed(HashBitLength.L256); //  L256=0-31, L512=0-63
+            var sha = new SHA1Managed(); 
+            var hash = sha.ComputeHash(byty); // 20: 0-19 bytes
+            //var bytes = new byte[] { hash.Xor(0, 4), hash.Xor(5, 9), hash.Xor(10, 14), hash.Xor(15, 19), };
+            var bytes = new byte[] { hash.XorNthBytes(0, 4), hash.XorNthBytes(1, 4), hash.XorNthBytes(2, 4), hash.XorNthBytes(3, 4), };
             return BitConverter.ToInt32(bytes, 0);
-            // TODO z nějketách bytů či bitů poskládat výsledný int
             //hash
             //return Convert.ToBase64String(hash).TrimEnd('=').Replace("+", "").Replace("/", "");
+        }
+
+        public static byte XorNthBytes(this byte[] b, int startIndex, int n)
+        {
+            byte xor = b[startIndex];
+            for (int i = startIndex+n; i < b.Length; i += n)
+                xor ^= b[i];
+            return xor;
+        }
+
+        public static byte XorBytes(this byte[] b, params int[] indexes)
+        {
+            byte xor = b[0];
+            for (int i = 1; i < indexes.Length; i++)
+                xor ^= b[i];
+            return xor;
         }
 
         public static byte Xor(this byte[] b, int from, int to)

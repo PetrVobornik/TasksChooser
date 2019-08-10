@@ -26,9 +26,13 @@ namespace Amporis.TasksChooser
             double rnd = random.NextDouble();
             if (rnd == 0)
             {
-                seed++;
-                random = new Random(seed);
-                rnd = NextDouble();
+                rnd = random.NextDouble();
+                if (rnd == 0)
+                {
+                    seed++;
+                    random = new Random(seed);
+                    rnd = NextDouble();
+                }
             }
             return rnd;
         }

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{595C2E21-5C27-414E-B773-0137E90182E0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TasksChooser.RandomTest</RootNamespace>
-    <AssemblyName>TasksChooser.RandomTest</AssemblyName>
+    <RootNamespace>TasksChooser.RandomTest.Cmd</RootNamespace>
+    <AssemblyName>TasksChooser.RandomTest.Cmd</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -23,7 +23,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -79,9 +79,13 @@
     <None Include="TasksChooser.RandomTest_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TasksChooser\TasksChooser.csproj">
+    <ProjectReference Include="..\..\TasksChooser\TasksChooser.csproj">
       <Project>{36a77d8a-4034-4a36-9ce9-83d6340bbcfd}</Project>
       <Name>TasksChooser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TasksChooser.RandomTest\TasksChooser.RandomTest.csproj">
+      <Project>{a82a2c13-c8fb-40c1-9d29-5344c0ad3208}</Project>
+      <Name>TasksChooser.RandomTest</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
