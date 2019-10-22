@@ -13,14 +13,11 @@ namespace Amporis.TasksChooser
     {
         public static string InnerText(this XElement element)
         {
-            if (element.HasElements)
-                using (var reader = element.CreateReader())
-                {
-                    reader.MoveToContent();
-                    return reader.ReadInnerXml();
-                }
-            else
-                return element.Value;
+            using (var reader = element.CreateReader())
+            {
+                reader.MoveToContent();
+                return reader.ReadInnerXml();
+            }
         }
 
         public static T GetAtt<T>(this XElement element, XName attributeName, T defaultValue)
