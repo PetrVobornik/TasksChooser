@@ -31,7 +31,7 @@ namespace Amporis.TasksChooser
                         Values = eRnd.GetAtt("values", ""),
                     };
                     break;
-                case 'E':
+                case 'E': 
                     rnd = new TaskRndE()
                     {
                         Texts = eRnd.Elements("item").Select(x => LoadTaskText(x)).ToArray(),
@@ -47,12 +47,16 @@ namespace Amporis.TasksChooser
                     };
                     break;
             }
+            rnd.Level = ReadLevel(eRnd);
             return rnd;
         }
 
+        internal static string[] ReadLevel(XElement eText)
+            => eText.Attribute("level")?.Value?.Split(',') ?? new[] { "" };
+
         private TaskText LoadTaskText(XElement eText, TaskText text)
         {
-            text.Level = eText.Attribute("level")?.Value?.Split(',') ?? new [] { "" };
+            text.Level = ReadLevel(eText);
             text.ForRounds = eText.Attribute("forRound")?.Value?.Split(',').Select(s => Convert.ToInt32(s)).ToArray();
             text.NotForRounds = eText.Attribute("notForRound")?.Value?.Split(',').Select(s => Convert.ToInt32(s)).ToArray();
             text.FromRound = eText.GetAtt<int?>("fromRound", null);

@@ -9,6 +9,7 @@ namespace Amporis.TasksChooser
     public abstract class TaskRnd
     {
         public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public string[] Level { get; set; }
         public abstract string GetValue(TaskRandom rnd);
     }
 
@@ -42,6 +43,6 @@ namespace Amporis.TasksChooser
     {
         public TaskText[] Texts { get; set; }
 
-        public override string GetValue(TaskRandom rnd) => TaskRender.RenderText(Texts[rnd.NextInt(Texts.Length)], rnd);
+        public override string GetValue(TaskRandom rnd) => TaskRender.RenderText(Texts[rnd.NextInt(Texts.Length)], rnd, new[] { "" });
     }
 }

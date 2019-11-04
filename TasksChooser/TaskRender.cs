@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Amporis.TasksChooser
 {
@@ -26,7 +27,7 @@ namespace Amporis.TasksChooser
             previousChoosedCombinations = new List<List<TaskItem>>();
         }
 
-        internal static string RenderText(TaskText text, TaskRandom random)
+        internal static string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
         {
             if (text == null) return "";
             string str = text.Text;
@@ -34,7 +35,19 @@ namespace Amporis.TasksChooser
             // Random elements
             if (text.Randoms != null)
                 foreach (var rnd in text.Randoms)
-                    str = str.Replace($"%{rnd.Id}%", rnd.GetValue(random));
+                    str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel) ? rnd.GetValue(random) : "");
+
+            // Check level for subelements
+            if (str.Contains('<') && str.Contains(" level=\""))
+            {
+                var eText = XElement.Parse($"<text>{str}</text>");
+                var subElements = eText.Descendants().ToList();
+                foreach (XElement el in subElements)
+                    if (el.Attribute("level") != null)
+                        if (!LevelCheck(TaskLoader.ReadLevel(el), settingLevel))
+                            el.Remove();
+                str = eText.InnerText();
+            }
 
             // Hidden HTML tags (starts with '\', e.g. '\&lt;')
             str = str.EncodeEscapedHtmlTags();
@@ -44,10 +57,10 @@ namespace Amporis.TasksChooser
 
         private void RenderText(TaskText text)
         {
-            output.AppendLine(RenderText(text, random));
+            output.AppendLine(RenderText(text, random, setting.Level));
         }
 
-        private bool LevelCheck(string[] itemLevel, string[] wantedLevel)
+        private static bool LevelCheck(string[] itemLevel, string[] wantedLevel)
         {
             if (wantedLevel.Any(c => c.StartsWith("-") && itemLevel.Contains(c.TrimStart('-'))))
                 return false; // Wanted level list contains NOT supported code (e.g. "-A"), so if the item has it, it's NO OK
