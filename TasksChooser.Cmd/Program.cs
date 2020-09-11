@@ -15,7 +15,7 @@ namespace Amporis.TasksChooser.Cmd
             var settings = tasks.Setting.MakeCopy();
             settings.Seed = "abc123";
             settings.SetProps |= TaskSettingProp.Round;
-
+            
             for (int i = 1; i <= 10; i++)
             {
                 settings.Round = i;

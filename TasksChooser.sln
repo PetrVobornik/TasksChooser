@@ -7,17 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser", "TasksChoose
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.Cmd", "TasksChooser.Cmd\TasksChooser.Cmd.csproj", "{589E95DB-BA9C-47A3-8F93-F7C5E5ED4F65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Cmd", "TasksChooser.RandomTest\TasksChooser.RandomTest.Cmd\TasksChooser.RandomTest.Cmd.csproj", "{595C2E21-5C27-414E-B773-0137E90182E0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Android", "TasksChooser.RandomTest\TasksChooser.RandomTest.Android\TasksChooser.RandomTest.Android.csproj", "{C71FEE10-EA38-4343-B2CF-7D8E254B5CC2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RandomTest", "RandomTest", "{29492177-3A4F-45AC-9AB9-CC926FB4B06B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest", "TasksChooser.RandomTest\TasksChooser.RandomTest\TasksChooser.RandomTest.csproj", "{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.RandomTest", "TasksChooser.RandomTest\TasksChooser.RandomTest\TasksChooser.RandomTest.csproj", "{A82A2C13-C8FB-40C1-9D29-5344C0AD3208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.RandomTest.Core", "TasksChooser.RandomTest\TasksChooser.RandomTest.Core\TasksChooser.RandomTest.Core.csproj", "{3DECD63A-6087-46E2-8B37-2C566E006830}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.RandomTest.Core", "TasksChooser.RandomTest\TasksChooser.RandomTest.Core\TasksChooser.RandomTest.Core.csproj", "{3DECD63A-6087-46E2-8B37-2C566E006830}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{4E4007BD-E917-4ECF-B823-18B6C9C3E117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{589E95DB-BA9C-47A3-8F93-F7C5E5ED4F65}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{589E95DB-BA9C-47A3-8F93-F7C5E5ED4F65}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{589E95DB-BA9C-47A3-8F93-F7C5E5ED4F65}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7618FCF2-EB84-4F8B-87A2-3037A8FB573C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{595C2E21-5C27-414E-B773-0137E90182E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,6 +51,10 @@ Global
 		{3DECD63A-6087-46E2-8B37-2C566E006830}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DECD63A-6087-46E2-8B37-2C566E006830}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DECD63A-6087-46E2-8B37-2C566E006830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E4007BD-E917-4ECF-B823-18B6C9C3E117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E4007BD-E917-4ECF-B823-18B6C9C3E117}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E4007BD-E917-4ECF-B823-18B6C9C3E117}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E4007BD-E917-4ECF-B823-18B6C9C3E117}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

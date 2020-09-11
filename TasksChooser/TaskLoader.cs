@@ -101,14 +101,14 @@ namespace Amporis.TasksChooser
             if (String.IsNullOrEmpty(ic)) return tic;
             tic.OriginalString = ic;
 
-            // "3" - Jen celkový počet (pouze číslo)
+            // "3" - Total count only (one number only)
             if (int.TryParse(ic, out int count))
             {
                 tic.TotalItemsCount = count;
                 return tic;
             } // else - more complex code...
 
-            // "3:..." - Celkový počet a další rozpis
+            // "3:..." - Total cound and next breakdown
             if (ic.Contains(':'))
             {
                 var icParts = ic.Split(':');
