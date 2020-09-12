@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.RandomTest", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.RandomTest.Core", "TasksChooser.RandomTest\TasksChooser.RandomTest.Core\TasksChooser.RandomTest.Core.csproj", "{3DECD63A-6087-46E2-8B37-2C566E006830}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{4E4007BD-E917-4ECF-B823-18B6C9C3E117}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TasksChooser.Web", "TasksChooser.Web\TasksChooser.Web.csproj", "{4E4007BD-E917-4ECF-B823-18B6C9C3E117}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

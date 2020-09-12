@@ -17,7 +17,6 @@ namespace TasksChooser.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
-            //services.AddAutofac();
 
             services.AddRazorPages();
         }
@@ -39,7 +38,6 @@ namespace TasksChooser.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapFallbackToPage("/Index");
             });
         }
     }
