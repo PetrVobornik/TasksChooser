@@ -186,6 +186,7 @@ namespace Amporis.TasksChooser
             setting.Level = copyProp(TaskSettingProp.Level, baseSettings.Level, externalSettings.Level);
             setting.RandomOrder = copyProp(TaskSettingProp.RandomOrder, baseSettings.RandomOrder, externalSettings.RandomOrder);
             setting.Round = copyProp(TaskSettingProp.Round, baseSettings.Round, externalSettings.Round);
+            setting.Seed = baseSettings?.Seed ?? "";
             setting.Seed += externalSettings.Seed; //copyProp(TaskSettingProp.Seed, baseSettings.Seed, externalSettings.Seed);
             setting.ItemsCount = copyProp(TaskSettingProp.ItemsCount, baseSettings.ItemsCount, externalSettings.ItemsCount);
             setting.SeparatePreviousPairs = copyProp(TaskSettingProp.SeparatePreviousPairs, baseSettings.SeparatePreviousPairs, externalSettings.SeparatePreviousPairs);

@@ -129,7 +129,7 @@ namespace Amporis.TasksChooser.Web
                 if (!String.IsNullOrEmpty(timeOut))
                 {
                     var limit = DateTime.Parse(timeOut);
-                    if (DateTime.Now > limit)
+                    if (DateTime.Now > limit) 
                         return null;
                 }
 

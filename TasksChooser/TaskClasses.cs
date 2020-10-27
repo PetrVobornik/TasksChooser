@@ -46,7 +46,7 @@ namespace Amporis.TasksChooser
 
     public class TaskSetting
     {
-        public string Seed { get; set; } = "1";
+        public string Seed { get; set; } = ""; //="1";
         public int Round { get; set; } = 1;
         public string[] Level { get; set; } = new [] { "" };
         public TaskItemsCount ItemsCount { get; set; } = new TaskItemsCount();

@@ -32,7 +32,7 @@ namespace Amporis.TasksChooser.Web.Pages
         public IActionResult OnPostAsync()
         {
             if (HttpContext.Request.Path.ToString().Trim('/') == "LTI")
-                return Redirect(TasksProces.LtiToGet(HttpContext.Request));
+                return Redirect(TasksProces.LtiToGet(HttpContext.Request)); // Obsolote
             this.Tasks = new TasksProces() { Cache = cache };
             this.Tasks.LoadData(HttpContext.Request);
             return Page();
