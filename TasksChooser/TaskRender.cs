@@ -186,8 +186,8 @@ namespace Amporis.TasksChooser
             output.Clear();
             // Where condition
             bool testItem(TaskText item) =>
-                (item.FromRound == null || item.FromRound >= round) &&  // FromRound
-                (item.ToRound == null || item.ToRound <= round) &&      // ToRound
+                (item.FromRound == null || round >= item.FromRound) &&  // FromRound
+                (item.ToRound == null || round <= item.ToRound) &&      // ToRound
                 RoundCheck(item.ForRounds, round, true) &&              // ForRounds
                 RoundCheck(item.NotForRounds, round, false) &&          // NotForRounds   
                 LevelCheck(item.Level, setting.Level);                  // Level
