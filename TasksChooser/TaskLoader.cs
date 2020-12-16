@@ -38,12 +38,12 @@ namespace Amporis.TasksChooser
                         Texts = eRnd.Elements("item").Select(x => LoadTaskText(x)).ToArray(),
                     };
                     break;
-                case 'G':
-                    rnd = new TaskRndG(); // Getter for global variables
-                    break;
-                case 'V':
-                    rnd = new TaskRndV(); // Getter for local variables
-                    break;
+                //case 'G':
+                //    rnd = new TaskRndG(); // Getter for global variables
+                //    break;
+                //case 'V':
+                //    rnd = new TaskRndV(); // Getter for local variables
+                //    break;
                 case 'S':
                 default: 
                     string values = eRnd.GetAtt("values", "");
@@ -57,7 +57,7 @@ namespace Amporis.TasksChooser
             rnd.Level = ReadLevel(eRnd);
             rnd.IsGlobal = eRnd.GetAtt("g", false);
             string id = eRnd.GetAtt("id", String.Empty);
-            rnd.IsLocalVariableSource = !rnd.IsGlobal && !String.IsNullOrEmpty(id) && !(rnd is TaskRndV) && !(rnd is TaskRndG);
+            rnd.IsLocalVariableSource = !rnd.IsGlobal && !String.IsNullOrEmpty(id); 
             if (!String.IsNullOrEmpty(id))
                 rnd.Id = id; // else has GUID as Id
             rnd.IsInMemoryOnly = eRnd.GetAtt("mem", false);
@@ -68,6 +68,25 @@ namespace Amporis.TasksChooser
         internal static string[] ReadLevel(XElement eText)
             => eText.Attribute("level")?.Value?.Split(',') ?? new[] { "" };
 
+
+        private TaskSwitch LoadTaskSwitch(XElement eSwitch)
+        {
+            char separator = eSwitch.GetAtt("separator", ",").FirstOrDefault();
+            TaskSwitch sw = new TaskSwitch();
+            sw.Level = ReadLevel(eSwitch);
+            sw.IsInMemoryOnly = eSwitch.GetAtt("mem", false);
+            sw.IsGlobal = eSwitch.GetAtt("g", false);
+            string id = eSwitch.GetAtt("id", String.Empty);
+            sw.IsLocalVariableSource = !sw.IsGlobal && !String.IsNullOrEmpty(id);
+            if (!String.IsNullOrEmpty(id))
+                sw.Id = id; // else has GUID as Id
+            sw.Value = eSwitch.GetAtt("value", "");
+            sw.Default = eSwitch.GetAtt("default", "");
+            sw.Cases = eSwitch.GetAtt("cases", "").Split(separator);
+            sw.Values = eSwitch.GetAtt("values", "").Split(separator);
+            return sw;
+        }
+
         private TaskText LoadTaskText(XElement eText, TaskText text)
         {
             text.Level = ReadLevel(eText);
@@ -76,19 +95,42 @@ namespace Amporis.TasksChooser
             text.FromRound = eText.GetAtt<int?>("fromRound", null);
             text.ToRound = eText.GetAtt<int?>("toRound", null);
             text.Randoms = new List<TaskRnd>();
+            text.Switches = new List<TaskSwitch>();
+            text.Variables = new List<string>();
 
             var subElements = eText.Descendants().ToList();
             foreach (XElement el in subElements)
+            {
+                // Randoms
                 if (el.Name.ToString().ToLower().StartsWith("rnd") && el.Name.ToString().Length == 4)
                 {
                     var rnd = LoadTaskRnd(el);
-                    if (!(rnd is TaskRndV) && // Local variables add only one time when it is defined (when it has specified data type)
-                        (!(rnd is TaskRndG) || !(text.Randoms.Any(x => x.Id == rnd.Id)))) // Global add into local only at first time
-                        text.Randoms.Add(rnd);
+                    text.Randoms.Add(rnd);
                     if (!rnd.IsInMemoryOnly)
                         el.AddBeforeSelf($"%{rnd.Id}%");
                     el.Remove();
                 }
+                // Switches
+                if (el.Name.ToString().ToLower() == "switch")
+                {
+                    var sw = LoadTaskSwitch(el);
+                    text.Switches.Add(sw);
+                    if (!sw.IsInMemoryOnly)
+                        el.AddBeforeSelf($"%{sw.Id}%");
+                    el.Remove();
+                }
+                // Variables
+                if (el.Name.ToString().ToLower() == "var")
+                {
+                    string varId = el.GetAtt("id", String.Empty);
+                    el.AddBeforeSelf($"%{varId}%");
+                    if (!text.Variables.Contains(varId))
+                        text.Variables.Add(varId);
+                    el.Remove();
+                }
+            }
+            // Remove Ids added in Randoms or Switches
+            text.Variables.RemoveAll(x => text.Randoms.Any(y => y.Id == x) || text.Switches.Any(y => y.Id == x));
 
             text.Text = eText.InnerText();
             return text;

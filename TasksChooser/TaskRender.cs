@@ -45,41 +45,39 @@ namespace Amporis.TasksChooser
             return null;
         }
 
-        string[] PrepareExcept(string[] except, Dictionary<string, object> localVariables)
+        string TranslateStringValue(string val, Dictionary<string, object> localVariables)
         {
-            if (except == null || except.Length == 0) return null;
-            var result = new string[except.Length];
-            for (int i = 0; i < except.Length; i++)
+            int index = 0;
+            while (val.Substring(index).Contains("{$"))
             {
-                string val = except[i];
-                int index = 0;
-                while (val.Substring(index).Contains("{$"))
-                {
-                    int iA = val.IndexOf("{$", index);
-                    int iB = val.IndexOf("}", iA);
-                    index = iA;// + 1;
-                    string sign = val.Substring(iA, iB - iA + 1);
-                    string varId = sign.Substring(2, sign.Length - 3);
-                    var x = GetVariable(varId, localVariables);
-                    val = val.Replace(sign, x?.ToString());
-                }
-                result[i] = val;
+                int iA = val.IndexOf("{$", index);
+                int iB = val.IndexOf("}", iA);
+                index = iA;// + 1;
+                string sign = val.Substring(iA, iB - iA + 1);
+                string varId = sign.Substring(2, sign.Length - 3);
+                var x = GetVariable(varId, localVariables);
+                val = val.Replace(sign, x?.ToString());
             }
+            return val;
+        }
+
+        string[] TranslateStringValues(string[] vals, Dictionary<string, object> localVariables)
+        {
+            if (vals == null || vals.Length == 0) return null;
+            var result = new string[vals.Length];
+            for (int i = 0; i < vals.Length; i++)
+                result[i] = TranslateStringValue(vals[i], localVariables);
             return result;
         }
 
         object GetRndValue(TaskRnd rnd, Dictionary<string, object> localVariables, TaskRandom random)
         {
             object rndVal;
-            // Is global and allready exists
-            if (rnd.IsGlobal)
-                if (globalVariables.TryGetValue(rnd.Id, out rndVal))
-                    return rndVal; // Get previously generated value
             // Needs to know Render
             if (rnd is IWantKnowRender)
                 ((IWantKnowRender)rnd).Render = this;
             // Get value
-            var except = PrepareExcept(rnd.Except, localVariables);
+            var except = TranslateStringValues(rnd.Except, localVariables);
             int iRepeats = 0;
             do {
                 rndVal = rnd.GetValue(random);
@@ -88,24 +86,41 @@ namespace Amporis.TasksChooser
             if (rnd.IsLocalVariableSource)
                 localVariables[rnd.Id] = rndVal; // Save for future
             // Save global variable
-            if (rnd.IsGlobal && !(rnd is TaskRndG))
+            if (rnd.IsGlobal)
                 globalVariables[rnd.Id] = rndVal;
             return rndVal;
         }
 
+        string GetSwitchValue(TaskSwitch sw, Dictionary<string, object> localVariables)
+        {
+            string val = TranslateStringValue(sw.Value, localVariables);
+            var cases = TranslateStringValues(sw.Cases, localVariables);
+            int index = sw.Cases.ToList().IndexOf(val);
+            if (index >= 0 && index < sw.Values.Length)
+                return TranslateStringValue(sw.Values[index], localVariables);
+            return sw.Default;
+        }
 
         internal string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
         {
             if (text == null) return "";
             string str = text.Text;
 
-            // Random elements
             var localVariables = new Dictionary<string, object>();
+            // Random elements
             if (text.Randoms != null)
                 foreach (var rnd in text.Randoms)
                     str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel) 
-                        ? GetRndValue(rnd, localVariables, random)?.ToString() 
-                        : "");
+                        ? GetRndValue(rnd, localVariables, random)?.ToString() : "");
+            // Switches 
+            if (text.Switches != null)
+                foreach (var sw in text.Switches)
+                    str = str.Replace($"%{sw.Id}%", LevelCheck(sw.Level, settingLevel)
+                        ? GetSwitchValue(sw, localVariables)?.ToString() : "");
+            // Variables
+            if (text.Variables != null)
+                foreach (var vr in text.Variables)
+                    str = str.Replace($"%{vr}%", GetVariable(vr, localVariables)?.ToString());
 
             // Check level for subelements
             if (str.Contains('<') && str.Contains(" level=\""))

@@ -21,7 +21,9 @@ namespace Amporis.TasksChooser
     {
         public string Text { get; set; }
         //public Dictionary<string, TaskRnd> Randoms { get; set; } // Local randoms
+        public List<string> Variables { get; set; } // Global variables used in local text
         public List<TaskRnd> Randoms { get; set; } // Local randoms
+        public List<TaskSwitch> Switches { get; set; } // Local switches
         //public Dictionary<string, object> LocalVariables { get; set; } // Rendered randoms for current text render
     }
 

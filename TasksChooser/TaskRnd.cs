@@ -56,18 +56,17 @@ namespace Amporis.TasksChooser
         public override string GetValue(TaskRandom rnd) => Render.RenderText(Texts[rnd.NextInt(Texts.Length)], rnd.GetSubRandom(), new[] { "" });
     }
 
-    // Global variable for all items (defined in before text)
-    public class TaskRndG : TaskRnd, IWantKnowRender
+    public class TaskSwitch
     {
-        public TaskRndG() : base() { IsGlobal = true; }
-        public TaskRender Render { get; set; }
-        public override string GetValue(TaskRandom rnd) => Render.GetGlobalVariable(Id)?.ToString();
-    }
-
-    // Local Variable (for one text/item)
-    public class TaskRndV : TaskRnd
-    {
-        public override string GetValue(TaskRandom rnd) => null; // Value gets first defined variable with the same Id
+        public string Id { get; set; } = Guid.NewGuid().ToString("N");
+        public string[] Level { get; set; }
+        public bool IsGlobal { get; set; } = false;
+        public bool IsLocalVariableSource { get; set; } = false;
+        public bool IsInMemoryOnly { get; set; } = false;
+        public string Value { get; set; }
+        public string[] Cases { get; set; }
+        public string[] Values { get; set; }
+        public string Default { get; set; }
     }
 
 }
