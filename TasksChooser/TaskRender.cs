@@ -11,7 +11,7 @@ namespace Amporis.TasksChooser
     {
         TaskRandom random;
         Tasks tasks;
-        TaskSetting setting;
+        internal TaskSetting Setting { get; private set; }
         StringBuilder output;
         Dictionary<string, object> globalVariables;
         Dictionary<int, int> countOfTaskPreviousleyChoosed;
@@ -21,7 +21,7 @@ namespace Amporis.TasksChooser
         private TaskRender(Tasks tasks, TaskSetting setting)
         {
             this.tasks = tasks;
-            this.setting = TaskLoader.MergeSettings(tasks.Setting, setting);
+            this.Setting = TaskLoader.MergeSettings(tasks.Setting, setting);
             random = new TaskRandom(setting.Seed);
             output = new StringBuilder();
             globalVariables = new Dictionary<string, object>();
@@ -79,7 +79,8 @@ namespace Amporis.TasksChooser
             // Get value
             var except = TranslateStringValues(rnd.Except, localVariables);
             int iRepeats = 0;
-            do {
+            do
+            {
                 rndVal = rnd.GetValue(random);
             } while (except != null && except.Contains(rndVal.ToString()) && iRepeats++ < 10000);
             // Save local variable
@@ -91,14 +92,20 @@ namespace Amporis.TasksChooser
             return rndVal;
         }
 
-        string GetSwitchValue(TaskSwitch sw, Dictionary<string, object> localVariables)
+        string GetSwitchValue(TaskSwitch sw, Dictionary<string, object> localVariables, TaskRandom random)
         {
             string val = TranslateStringValue(sw.Value, localVariables);
             var cases = TranslateStringValues(sw.Cases, localVariables);
-            int index = sw.Cases.ToList().IndexOf(val);
+            int index = cases.ToList().IndexOf(val);
+            if (sw.IsTexts)
+                if (index >= 0 && index < sw.ValuesTexts.Length)
+                    return RenderText(sw.ValuesTexts[index], random.GetSubRandom(), Setting.Level);
+                else
+                    return RenderText(sw.DefaultText, random.GetSubRandom(), Setting.Level);
             if (index >= 0 && index < sw.Values.Length)
                 return TranslateStringValue(sw.Values[index], localVariables);
-            return sw.Default;
+            else 
+                return TranslateStringValue(sw.Default, localVariables);
         }
 
         internal string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
@@ -110,13 +117,13 @@ namespace Amporis.TasksChooser
             // Random elements
             if (text.Randoms != null)
                 foreach (var rnd in text.Randoms)
-                    str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel) 
+                    str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel)
                         ? GetRndValue(rnd, localVariables, random)?.ToString() : "");
             // Switches 
             if (text.Switches != null)
                 foreach (var sw in text.Switches)
                     str = str.Replace($"%{sw.Id}%", LevelCheck(sw.Level, settingLevel)
-                        ? GetSwitchValue(sw, localVariables)?.ToString() : "");
+                        ? GetSwitchValue(sw, localVariables, random)?.ToString() : "");
             // Variables
             if (text.Variables != null)
                 foreach (var vr in text.Variables)
@@ -142,7 +149,7 @@ namespace Amporis.TasksChooser
 
         private void RenderText(TaskText text)
         {
-            output.AppendLine(RenderText(text, random.GetSubRandom(), setting.Level));
+            output.AppendLine(RenderText(text, random.GetSubRandom(), Setting.Level));
         }
 
         private static bool LevelCheck(string[] itemLevel, string[] wantedLevel)
@@ -173,19 +180,20 @@ namespace Amporis.TasksChooser
                 sourceList = new List<TaskItem>(allItems);
             else
                 if (negateFromCategory)
-                    sourceList = allItems.Where(x => x.Categories?.Any(c => fromCategory.Contains(c)) != true);
-                else 
-                    sourceList = allItems.Where(x => x.Categories?.Any(c => fromCategory.Contains(c)) == true);
+                sourceList = allItems.Where(x => x.Categories?.Any(c => fromCategory.Contains(c)) != true);
+            else
+                sourceList = allItems.Where(x => x.Categories?.Any(c => fromCategory.Contains(c)) == true);
 
             // Prepare items for sorting
             sourceList = sourceList.Where(x => !targetList.Contains(x)); // Skip items that are already in the selection
             var lastChoosedItems = previousChoosedCombinations?.LastOrDefault();
-            sourceList.ForEach(x => x.OrderData = new TaskItemOrderData() {
-                    CountOfPreviousUsing = countOfTaskPreviousleyChoosed.Get(x.Index) ?? 0,
-                    WasInPreviousRound = lastChoosedItems?.Contains(x) == true,
-                    CountOfPreviousRoundWhenWasInPairWithOtherItem = 0,
-                    RandomValue = random.NextDouble(),
-                });
+            sourceList.ForEach(x => x.OrderData = new TaskItemOrderData()
+            {
+                CountOfPreviousUsing = countOfTaskPreviousleyChoosed.Get(x.Index) ?? 0,
+                WasInPreviousRound = lastChoosedItems?.Contains(x) == true,
+                CountOfPreviousRoundWhenWasInPairWithOtherItem = 0,
+                RandomValue = random.NextDouble(),
+            });
 
             // Anonymous method for sorting of sourceList
             void sortSourceList() => sourceList = sourceList
@@ -196,7 +204,7 @@ namespace Amporis.TasksChooser
             sortSourceList(); // 1st sort
 
             // TODO: stejné kombinace úloh (count > 1), jako v minulsoti při se snažit "rozhodit"
-            if (setting.SeparatePreviousPairs && count > 1 && previousChoosedCombinations.Count > 0)
+            if (Setting.SeparatePreviousPairs && count > 1 && previousChoosedCombinations.Count > 0)
             {
                 var selectedItems = new List<TaskItem>();
                 selectedItems.Add(sourceList.First());
@@ -207,7 +215,7 @@ namespace Amporis.TasksChooser
                         previousChoosedCombinations
                             .Where(y => y.Contains(x))
                             .Count(y => y.Intersect(selectedItems).Any()));
-                            //.Sum(y => prvItems.Count(z => y.Contains(y))));
+                    //.Sum(y => prvItems.Count(z => y.Contains(y))));
                     sortSourceList();
                     selectedItems.Add(sourceList.First());
                     sourceList = sourceList.Skip(1); // Remove first item
@@ -230,7 +238,7 @@ namespace Amporis.TasksChooser
         private List<TaskItem> MixItems(List<TaskItem> allItems)
         {
             var items = new List<TaskItem>();
-            var ic = setting.ItemsCount;
+            var ic = Setting.ItemsCount;
             if (ic.CountsFromCategories == null)
                 ChooseRandomItems(allItems, ic.TotalItemsCount ?? 1, null, items); // No filter by categories 
             else
@@ -241,7 +249,7 @@ namespace Amporis.TasksChooser
                     {
                         IEnumerable<string> noCats = new string[0];
                         ic.CountsFromCategories.Take(i).ForEach(x => noCats = noCats.Union(x.Categories)); // previously used categories
-                        var yesCats = allItems.SelectMany(c => c.Categories).Distinct().Where(x => !noCats.Contains(x)).OrderBy(x => random.NextDouble()).ToArray(); 
+                        var yesCats = allItems.SelectMany(c => c.Categories).Distinct().Where(x => !noCats.Contains(x)).OrderBy(x => random.NextDouble()).ToArray();
                         foreach (var cat in yesCats) // remaining unused categories
                         {
                             ChooseRandomItems(allItems, item.ItemsCount, new[] { cat }, items); // negative selection (not in these categories)
@@ -250,12 +258,12 @@ namespace Amporis.TasksChooser
                         if (ic.TotalItemsCount != null && ic.TotalItemsCount < items.Count)
                             items = items.Take((int)ic.TotalItemsCount).ToList(); // truncate now, on last is unnecessary items
                     }
-                    else 
+                    else
                         ChooseRandomItems(allItems, item.ItemsCount, item.Categories, items);
                 }
             // Mix/Order
             if (items.Count > 1)
-                if (setting.RandomOrder)
+                if (Setting.RandomOrder)
                     items = items.OrderBy(x => random.NextDouble()).ToList();
                 else
                     items = items.OrderBy(x => x.Index).ToList();
@@ -276,7 +284,7 @@ namespace Amporis.TasksChooser
                 (item.ToRound == null || round <= item.ToRound) &&      // ToRound
                 RoundCheck(item.ForRounds, round, true) &&              // ForRounds
                 RoundCheck(item.NotForRounds, round, false) &&          // NotForRounds   
-                LevelCheck(item.Level, setting.Level);                  // Level
+                LevelCheck(item.Level, Setting.Level);                  // Level
             // Before
             tasks.Before.Where(x => testItem(x)).ForEach(x => RenderText(x));
             // Items
@@ -300,7 +308,7 @@ namespace Amporis.TasksChooser
         {
             var render = new TaskRender(tasks, setting);
             string result = "";
-            for (int i = 1; i <= render.setting.Round; i++)
+            for (int i = 1; i <= render.Setting.Round; i++)
                 result = render.Render(i);
             selectedItemIds = render.selectedIds.ArrayToCommaText();
             return result;
@@ -313,9 +321,9 @@ namespace Amporis.TasksChooser
         {
             var render = new TaskRender(tasks, setting);
             StringBuilder result = new StringBuilder();
-            if (roundTo >= render.setting.Round)
+            if (roundTo >= render.Setting.Round)
                 for (int i = 1; i <= roundTo; i++)
-                    if (i >= render.setting.Round)
+                    if (i >= render.Setting.Round)
                         result.AppendLine(render.Render(i));
                     else
                         render.Render(i);

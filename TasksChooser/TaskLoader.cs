@@ -81,14 +81,33 @@ namespace Amporis.TasksChooser
             if (!String.IsNullOrEmpty(id))
                 sw.Id = id; // else has GUID as Id
             sw.Value = eSwitch.GetAtt("value", "");
-            sw.Default = eSwitch.GetAtt("default", "");
-            sw.Cases = eSwitch.GetAtt("cases", "").Split(separator);
-            sw.Values = eSwitch.GetAtt("values", "").Split(separator);
+            if (eSwitch.HasElements)
+            {
+                sw.IsTexts = true;
+                var vls = new List<TaskText>();
+                var cases = new List<string>();
+                foreach (var cs in eSwitch.Elements("case"))
+                {
+                    cases.Add(cs.GetAtt("value", ""));
+                    vls.Add(LoadTaskText(cs));
+                }
+                sw.Cases = cases.ToArray();
+                sw.ValuesTexts = vls.ToArray();
+                if (eSwitch.Element("default") != null)
+                    sw.DefaultText = LoadTaskText(eSwitch.Element("default"));
+            }
+            else
+            {
+                sw.Cases = eSwitch.GetAtt("cases", "").Split(separator);
+                sw.Default = eSwitch.GetAtt("default", "");
+                sw.Values = eSwitch.GetAtt("values", "").Split(separator);
+            }
             return sw;
         }
 
         private TaskText LoadTaskText(XElement eText, TaskText text)
         {
+            if (eText == null) return null;
             text.Level = ReadLevel(eText);
             text.ForRounds = eText.Attribute("forRound")?.Value?.Split(',').Select(s => Convert.ToInt32(s)).ToArray();
             text.NotForRounds = eText.Attribute("notForRound")?.Value?.Split(',').Select(s => Convert.ToInt32(s)).ToArray();

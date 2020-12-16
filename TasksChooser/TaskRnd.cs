@@ -53,7 +53,7 @@ namespace Amporis.TasksChooser
         public TaskText[] Texts { get; set; }
         public TaskRender Render { get; set; }
 
-        public override string GetValue(TaskRandom rnd) => Render.RenderText(Texts[rnd.NextInt(Texts.Length)], rnd.GetSubRandom(), new[] { "" });
+        public override string GetValue(TaskRandom rnd) => Render.RenderText(Texts[rnd.NextInt(Texts.Length)], rnd.GetSubRandom(), Render.Setting.Level);
     }
 
     public class TaskSwitch
@@ -64,9 +64,12 @@ namespace Amporis.TasksChooser
         public bool IsLocalVariableSource { get; set; } = false;
         public bool IsInMemoryOnly { get; set; } = false;
         public string Value { get; set; }
+        public bool IsTexts { get; set; } = false;
         public string[] Cases { get; set; }
         public string[] Values { get; set; }
+        public TaskText[] ValuesTexts { get; set; }
         public string Default { get; set; }
+        public TaskText DefaultText { get; set; }
     }
 
 }
