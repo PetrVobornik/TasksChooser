@@ -21,6 +21,11 @@ namespace Amporis.TasksChooser
             random = new Random(this.seed);
         }
 
+        public TaskRandom GetSubRandom()
+        {
+            return new TaskRandom(NextInt(int.MinValue).ToString()); 
+        }
+
         public double NextDouble()
         {
             double rnd = random.NextDouble();

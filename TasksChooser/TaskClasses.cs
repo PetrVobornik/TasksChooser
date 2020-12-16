@@ -20,7 +20,9 @@ namespace Amporis.TasksChooser
     public class TaskText : TaskItemBase
     {
         public string Text { get; set; }
-        public List<TaskRnd> Randoms { get; set; }
+        //public Dictionary<string, TaskRnd> Randoms { get; set; } // Local randoms
+        public List<TaskRnd> Randoms { get; set; } // Local randoms
+        //public Dictionary<string, object> LocalVariables { get; set; } // Rendered randoms for current text render
     }
 
     public class TaskItem : TaskText

@@ -13,6 +13,7 @@ namespace Amporis.TasksChooser
         Tasks tasks;
         TaskSetting setting;
         StringBuilder output;
+        Dictionary<string, object> globalVariables;
         Dictionary<int, int> countOfTaskPreviousleyChoosed;
         List<List<TaskItem>> previousChoosedCombinations; // choosed items in each round
         string[] selectedIds; // For Log
@@ -23,19 +24,88 @@ namespace Amporis.TasksChooser
             this.setting = TaskLoader.MergeSettings(tasks.Setting, setting);
             random = new TaskRandom(setting.Seed);
             output = new StringBuilder();
+            globalVariables = new Dictionary<string, object>();
             countOfTaskPreviousleyChoosed = new Dictionary<int, int>();
             previousChoosedCombinations = new List<List<TaskItem>>();
         }
 
-        internal static string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
+        public object GetGlobalVariable(string id)
+        {
+            if (globalVariables.TryGetValue(id, out object val))
+                return val;
+            return null;
+        }
+
+        object GetVariable(string id, Dictionary<string, object> localVariables)
+        {
+            if (localVariables.ContainsKey(id))
+                return localVariables[id];
+            if (globalVariables.ContainsKey(id))
+                return globalVariables[id];
+            return null;
+        }
+
+        string[] PrepareExcept(string[] except, Dictionary<string, object> localVariables)
+        {
+            if (except == null || except.Length == 0) return null;
+            var result = new string[except.Length];
+            for (int i = 0; i < except.Length; i++)
+            {
+                string val = except[i];
+                int index = 0;
+                while (val.Substring(index).Contains("{$"))
+                {
+                    int iA = val.IndexOf("{$", index);
+                    int iB = val.IndexOf("}", iA);
+                    index = iA;// + 1;
+                    string sign = val.Substring(iA, iB - iA + 1);
+                    string varId = sign.Substring(2, sign.Length - 3);
+                    var x = GetVariable(varId, localVariables);
+                    val = val.Replace(sign, x?.ToString());
+                }
+                result[i] = val;
+            }
+            return result;
+        }
+
+        object GetRndValue(TaskRnd rnd, Dictionary<string, object> localVariables, TaskRandom random)
+        {
+            object rndVal;
+            // Is global and allready exists
+            if (rnd.IsGlobal)
+                if (globalVariables.TryGetValue(rnd.Id, out rndVal))
+                    return rndVal; // Get previously generated value
+            // Needs to know Render
+            if (rnd is IWantKnowRender)
+                ((IWantKnowRender)rnd).Render = this;
+            // Get value
+            var except = PrepareExcept(rnd.Except, localVariables);
+            int iRepeats = 0;
+            do {
+                rndVal = rnd.GetValue(random);
+            } while (except != null && except.Contains(rndVal.ToString()) && iRepeats++ < 10000);
+            // Save local variable
+            if (rnd.IsLocalVariableSource)
+                localVariables[rnd.Id] = rndVal; // Save for future
+            // Save global variable
+            if (rnd.IsGlobal && !(rnd is TaskRndG))
+                globalVariables[rnd.Id] = rndVal;
+            return rndVal;
+        }
+
+
+        internal string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
         {
             if (text == null) return "";
             string str = text.Text;
 
             // Random elements
+            var localVariables = new Dictionary<string, object>();
             if (text.Randoms != null)
                 foreach (var rnd in text.Randoms)
-                    str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel) ? rnd.GetValue(random) : "");
+                    str = str.Replace($"%{rnd.Id}%", LevelCheck(rnd.Level, settingLevel) 
+                        ? GetRndValue(rnd, localVariables, random)?.ToString() 
+                        : "");
 
             // Check level for subelements
             if (str.Contains('<') && str.Contains(" level=\""))
@@ -57,7 +127,7 @@ namespace Amporis.TasksChooser
 
         private void RenderText(TaskText text)
         {
-            output.AppendLine(RenderText(text, random, setting.Level));
+            output.AppendLine(RenderText(text, random.GetSubRandom(), setting.Level));
         }
 
         private static bool LevelCheck(string[] itemLevel, string[] wantedLevel)
@@ -184,6 +254,7 @@ namespace Amporis.TasksChooser
         private string Render(int round)
         {
             output.Clear();
+            globalVariables.Clear();
             // Where condition
             bool testItem(TaskText item) =>
                 (item.FromRound == null || round >= item.FromRound) &&  // FromRound

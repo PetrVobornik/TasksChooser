@@ -14,6 +14,7 @@ namespace Amporis.TasksChooser
         private TaskRnd LoadTaskRnd(XElement eRnd)
         {
             TaskRnd rnd;
+            char separator = ',';
             switch (eRnd.Name.ToString().ToUpper().Last())
             {
                 case 'I':
@@ -37,10 +38,16 @@ namespace Amporis.TasksChooser
                         Texts = eRnd.Elements("item").Select(x => LoadTaskText(x)).ToArray(),
                     };
                     break;
+                case 'G':
+                    rnd = new TaskRndG(); // Getter for global variables
+                    break;
+                case 'V':
+                    rnd = new TaskRndV(); // Getter for local variables
+                    break;
                 case 'S':
-                default:
-                    char separator = eRnd.GetAtt("separator", ",").FirstOrDefault();
+                default: 
                     string values = eRnd.GetAtt("values", "");
+                    separator = eRnd.GetAtt("separator", ",").FirstOrDefault();
                     rnd = new TaskRndS()
                     {
                         Values = values.Split(separator),
@@ -48,6 +55,13 @@ namespace Amporis.TasksChooser
                     break;
             }
             rnd.Level = ReadLevel(eRnd);
+            rnd.IsGlobal = eRnd.GetAtt("g", false);
+            string id = eRnd.GetAtt("id", String.Empty);
+            rnd.IsLocalVariableSource = !rnd.IsGlobal && !String.IsNullOrEmpty(id) && !(rnd is TaskRndV) && !(rnd is TaskRndG);
+            if (!String.IsNullOrEmpty(id))
+                rnd.Id = id; // else has GUID as Id
+            rnd.IsInMemoryOnly = eRnd.GetAtt("mem", false);
+            rnd.Except = eRnd.GetAtt("except", "").Split(separator);
             return rnd;
         }
 
@@ -68,8 +82,11 @@ namespace Amporis.TasksChooser
                 if (el.Name.ToString().ToLower().StartsWith("rnd") && el.Name.ToString().Length == 4)
                 {
                     var rnd = LoadTaskRnd(el);
-                    text.Randoms.Add(rnd);
-                    el.AddBeforeSelf($"%{rnd.Id}%");
+                    if (!(rnd is TaskRndV) && // Local variables add only one time when it is defined (when it has specified data type)
+                        (!(rnd is TaskRndG) || !(text.Randoms.Any(x => x.Id == rnd.Id)))) // Global add into local only at first time
+                        text.Randoms.Add(rnd);
+                    if (!rnd.IsInMemoryOnly)
+                        el.AddBeforeSelf($"%{rnd.Id}%");
                     el.Remove();
                 }
 
