@@ -105,6 +105,13 @@ namespace Amporis.TasksChooser
             return sw;
         }
 
+        void RemoveElementFromList(List<XElement> list, XElement el)
+        {
+            foreach (var ex in el.Descendants())
+                list.Remove(ex);
+            list.Remove(el);
+        }
+
         private TaskText LoadTaskText(XElement eText, TaskText text)
         {
             if (eText == null) return null;
@@ -118,8 +125,11 @@ namespace Amporis.TasksChooser
             text.Variables = new List<string>();
 
             var subElements = eText.Descendants().ToList();
-            foreach (XElement el in subElements)
+            //foreach (XElement el in subElements)
+            for (int i = 0; i < subElements.Count; i++)
             {
+                var el = subElements[i];
+                if (el.Parent == null) continue;
                 // Randoms
                 if (el.Name.ToString().ToLower().StartsWith("rnd") && el.Name.ToString().Length == 4)
                 {
@@ -127,6 +137,7 @@ namespace Amporis.TasksChooser
                     text.Randoms.Add(rnd);
                     if (!rnd.IsInMemoryOnly)
                         el.AddBeforeSelf($"%{rnd.Id}%");
+                    RemoveElementFromList(subElements, el); i--;
                     el.Remove();
                 }
                 // Switches
@@ -136,6 +147,7 @@ namespace Amporis.TasksChooser
                     text.Switches.Add(sw);
                     if (!sw.IsInMemoryOnly)
                         el.AddBeforeSelf($"%{sw.Id}%");
+                    RemoveElementFromList(subElements, el); i--;
                     el.Remove();
                 }
                 // Variables
@@ -145,6 +157,7 @@ namespace Amporis.TasksChooser
                     el.AddBeforeSelf($"%{varId}%");
                     if (!text.Variables.Contains(varId))
                         text.Variables.Add(varId);
+                    RemoveElementFromList(subElements, el); i--;
                     el.Remove();
                 }
             }

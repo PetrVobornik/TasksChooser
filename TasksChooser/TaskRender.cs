@@ -85,7 +85,7 @@ namespace Amporis.TasksChooser
             } while (except != null && except.Contains(rndVal.ToString()) && iRepeats++ < 10000);
             // Save local variable
             if (rnd.IsLocalVariableSource)
-                localVariables[rnd.Id] = rndVal; // Save for future
+                localVariables[rnd.Id] = rndVal; // Save for the future
             // Save global variable
             if (rnd.IsGlobal)
                 globalVariables[rnd.Id] = rndVal;
@@ -97,15 +97,24 @@ namespace Amporis.TasksChooser
             string val = TranslateStringValue(sw.Value, localVariables);
             var cases = TranslateStringValues(sw.Cases, localVariables);
             int index = cases.ToList().IndexOf(val);
+            string result;
             if (sw.IsTexts)
                 if (index >= 0 && index < sw.ValuesTexts.Length)
-                    return RenderText(sw.ValuesTexts[index], random.GetSubRandom(), Setting.Level);
+                    result = RenderText(sw.ValuesTexts[index], random.GetSubRandom(), Setting.Level);
                 else
-                    return RenderText(sw.DefaultText, random.GetSubRandom(), Setting.Level);
-            if (index >= 0 && index < sw.Values.Length)
-                return TranslateStringValue(sw.Values[index], localVariables);
-            else 
-                return TranslateStringValue(sw.Default, localVariables);
+                    result = RenderText(sw.DefaultText, random.GetSubRandom(), Setting.Level);
+            else
+                if (index >= 0 && index < sw.Values.Length)
+                    result = TranslateStringValue(sw.Values[index], localVariables);
+                else
+                    result = TranslateStringValue(sw.Default, localVariables);
+            // Save local variable
+            if (sw.IsLocalVariableSource)
+                localVariables[sw.Id] = result; 
+            // Save global variable
+            if (sw.IsGlobal)
+                globalVariables[sw.Id] = result;
+            return result;
         }
 
         internal string RenderText(TaskText text, TaskRandom random, string[] settingLevel)
